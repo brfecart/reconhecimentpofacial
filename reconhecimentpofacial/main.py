@@ -4,17 +4,22 @@ from reconhecimento import recognize
 from interface import load_model,menu
 
 def main():
-    init_db()
-    try: model=load_model()
-    except (FileNotFoundError,RuntimeError) as e:
-        print(f"Erro de modelo: {e}\nConsulte o README para baixar os pesos."); return
+    try:
+        init_db()
+        model = load_model()
+    except (FileNotFoundError, RuntimeError) as e:
+        print(f"Erro: {e}")
+        return
     while True:
         op=menu()
         try:
             if op=="1":
                 name=input("Nome ou ID: ").strip()
                 if not name: print("Nome/ID vazio."); continue
-                register(name,model)
+                ok=input("A pessoa autorizou o uso do rosto (LGPD)? (s/n): ").strip().lower()
+                if ok!="s": print("Cadastro cancelado: sem consentimento."); continue
+                register(name,model,consentimento=True)
+            elif op=="2": recognize(model)
             elif op=="2": recognize(model)
             elif op=="3":
                 people=list_people()

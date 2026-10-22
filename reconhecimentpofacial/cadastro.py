@@ -10,7 +10,7 @@ def feature(model, image):
     if not np.isfinite(v).all() or n<1e-8: raise ValueError("Embedding inválido")
     return v/n
 
-def register(nome, model):
+def register(nome, model, consentimento=False):
     samples=[]
     poses=["Olhe para frente","Vire um pouco à esquerda","Vire um pouco à direita",
            "Incline levemente a cabeça","Olhe para frente","Afaste-se um pouco","Aproxime-se um pouco"]
@@ -31,7 +31,7 @@ def register(nome, model):
             if key==27: return False
             if key==32 and len(faces)==1 and quality(frame,faces[0],1)[0]:
                 samples.append(feature(model,align(frame,faces[0])))
-        save_person(nome,np.stack(samples)); print("Cadastro concluído; fotos não foram gravadas.")
+        save_person(nome, np.stack(samples), consentimento); print("Cadastro concluído; fotos não foram gravadas.")
         return True
     finally:
         cam.close(); cv2.destroyAllWindows()
